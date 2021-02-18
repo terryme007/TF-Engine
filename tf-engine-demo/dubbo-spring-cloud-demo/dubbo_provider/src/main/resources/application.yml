@@ -1,0 +1,25 @@
+server:
+  port: 8000
+dubbo:
+  scan:
+    base-packages: com.springcloud.dubbo_provider.service
+  protocol:
+    name: dubbo
+    port: 9999
+  registry:
+    address: spring-cloud://localhoost
+#    address: nacos://localhost:8848
+#    username: nacos
+#    password: nacos
+spring:
+  application:
+    name: dubbo-spring-cloud-provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+#        namespace: 5dfe7120-44ba-4149-8e69-85620741b9cb
+        username: nacos
+        password: nacos
+  main:
+    allow-bean-definition-overriding: true
