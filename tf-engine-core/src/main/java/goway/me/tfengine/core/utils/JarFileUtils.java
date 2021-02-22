@@ -48,7 +48,10 @@ public class JarFileUtils {
                 String path = dirRoot+"/"+outClass.getName().replaceAll("\\.","/")+".class";
                 File destFile=new File(path);
                 if (!destFile.getParentFile().exists()) {
-                    destFile.getParentFile().mkdirs();
+                    boolean mkdirsSuccess = destFile.getParentFile().mkdirs();
+                    if(!mkdirsSuccess){
+                        throw new RuntimeException(String.format("无法创建目录【%s】",destFile.getParentFile().getAbsolutePath()));
+                    }
                 }
                 FileOutputStream fos=null;
                 try{
@@ -71,7 +74,8 @@ public class JarFileUtils {
                 }
             });
             String savePath=dirRoot+"/"+apiReference.substring(0,apiReference.indexOf("."));
-            String zipFilePath=dirRoot+"/"+ aClass.getSimpleName()+"_"+version + ".jar";
+            String jarName=String.format("%s_%s_%s.jar",modelName,aClass.getSimpleName(),version);
+            String zipFilePath=dirRoot+"/"+ jarName;
             ZipUtils.toZip(savePath,new FileOutputStream(zipFilePath),true);
             return Base64FileUtil.getFileStr(zipFilePath);
         } catch (Exception e) {
@@ -84,9 +88,9 @@ public class JarFileUtils {
     }
 
     //删除文件或文件夹
-    private static void delete(File file){
+    private static boolean delete(File file){
         if(!file.exists()){
-            return;
+            return true;
         }
         File[] files =null;
         if(file.isDirectory()){
@@ -95,10 +99,13 @@ public class JarFileUtils {
         }
         if(files!=null && files.length>0){
             for(File f: files){
-                delete(f);
+                boolean deleteSuccess = delete(f);
+                if(!deleteSuccess){
+                    return false;
+                }
             }
         }
-        boolean deleteSuccess = file.delete();
+        return file.delete();
     }
 
 
