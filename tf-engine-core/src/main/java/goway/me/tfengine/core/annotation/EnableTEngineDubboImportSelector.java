@@ -1,10 +1,8 @@
 package goway.me.tfengine.core.annotation;
 
-import goway.me.tfengine.core.utils.JarFileUtils;
-import goway.me.tfengine.core.utils.ScannerUtils;
-import goway.me.tfengine.core.utils.ZipUtils;
-import goway.me.tfengine.core.utils.ZookeeperUtils;
+import goway.me.tfengine.core.utils.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.zookeeper.CreateMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -19,6 +17,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,7 +76,10 @@ public class EnableTEngineDubboImportSelector implements ImportBeanDefinitionReg
                     if(StringUtils.isBlank(zkAddress)){
                         zkAddress=defaultZkAddress;
                     }
-                    ZookeeperUtils.create(zkAddress,registerPath,jarBase64);
+                    ZookeeperUtils.create(zkAddress,registerPath,jarBase64, CreateMode.PERSISTENT);
+                    //获取当前IP，将当前服务注册
+                    String ipRegisterPath=registerPath+"/"+ IpUtils.getIp();
+                    ZookeeperUtils.create(zkAddress,ipRegisterPath,String.valueOf(new Date().getTime()),CreateMode.EPHEMERAL);
                 });
             }catch (Exception e){
                 e.printStackTrace();

@@ -93,7 +93,7 @@ public class ZookeeperUtils {
 
     }
 
-    public static void create(String zkAddress,String path,String data){
+    public static void create(String zkAddress,String path,String data,CreateMode createMode){
         //创建节点
         CuratorFramework cur=connectZk(zkAddress);
         try{
@@ -109,10 +109,10 @@ public class ZookeeperUtils {
                     pathSb.append("/").append(nowPath);
                     if(cur.checkExists().forPath(pathSb.toString())==null){
                         if(nowPath.equals(lastPath)){
-                            cur.create().withMode(CreateMode.PERSISTENT)
+                            cur.create().withMode(createMode)
                                     .forPath(pathSb.toString(), data.getBytes());
                         }else{
-                            cur.create().withMode(CreateMode.PERSISTENT).forPath(pathSb.toString());
+                            cur.create().withMode(createMode).forPath(pathSb.toString());
                         }
                     }
                 }
@@ -167,35 +167,35 @@ public class ZookeeperUtils {
         return new ArrayList<>();
     }
 
-    public static void main(String[] args) throws Exception {
-        String zkAddress="localhost:2181";
-        String rootPath="/tfengine";
-
-        createListen(zkAddress,rootPath);
-
-        String path=rootPath+"/dubbo_api/";
-
-        create(zkAddress,path+"dubbo_provider_Service1_v1","hello");
-        Thread.sleep(1000);
-        create(zkAddress,path+"dubbo_provider_Service1_v2","hello");
-        Thread.sleep(1000);
-        create(zkAddress,path+"dubbo_provider_Service1_v3","hello");
-        Thread.sleep(1000);
-
-        try{
-            List<String> childrenList = getChildren(zkAddress, rootPath);
-            childrenList.forEach(childrenPath->{
-                String data = get(zkAddress, childrenPath);
-                System.out.println(data);
-            });
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        del(zkAddress,rootPath);
-        Thread.sleep(1000);
-
-    }
+//    public static void main(String[] args) throws Exception {
+//        String zkAddress="localhost:2181";
+//        String rootPath="/tfengine";
+//
+//        createListen(zkAddress,rootPath);
+//
+//        String path=rootPath+"/dubbo_api/";
+//
+//        create(zkAddress,path+"dubbo_provider_Service1_v1","hello");
+//        Thread.sleep(1000);
+//        create(zkAddress,path+"dubbo_provider_Service1_v2","hello");
+//        Thread.sleep(1000);
+//        create(zkAddress,path+"dubbo_provider_Service1_v3","hello");
+//        Thread.sleep(1000);
+//
+//        try{
+//            List<String> childrenList = getChildren(zkAddress, rootPath);
+//            childrenList.forEach(childrenPath->{
+//                String data = get(zkAddress, childrenPath);
+//                System.out.println(data);
+//            });
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//
+//        del(zkAddress,rootPath);
+//        Thread.sleep(1000);
+//
+//    }
 
 
     /**

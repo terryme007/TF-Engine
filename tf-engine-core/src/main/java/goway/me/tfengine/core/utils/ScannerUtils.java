@@ -159,16 +159,16 @@ public class ScannerUtils {
     private Set<Map<String, String>> dubboInterfaceSet = new HashSet<>();
 
     public Set<Map<String, String>> getDubboInterface(String packageName) throws Exception{
-        Map<String, String> dubboInterfaceMap=new HashMap<>();
-        if (dubboInterfaceMap.isEmpty()) {
+        if (dubboInterfaceSet.isEmpty()) {
             Set<Class<?>> clsList = getClasses(packageName);
             if (clsList != null && clsList.size() > 0) {
                 for (Class<?> cls : clsList) {
                     Service annotation = cls.getAnnotation(Service.class);
                     if (annotation != null) {
+                        Map<String, String> dubboInterfaceMap=new HashMap<>();
                         dubboInterfaceMap.put("version",annotation.version());
                         dubboInterfaceMap.put("className",cls.getInterfaces()[0].getName());
-                        dubboInterfaceMap.put("serviceName",cls.getSimpleName());
+                        dubboInterfaceMap.put("serviceName",cls.getInterfaces()[0].getSimpleName());
                         dubboInterfaceSet.add(dubboInterfaceMap);
                     }
                 }
