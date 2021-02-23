@@ -9,12 +9,10 @@ import java.util.Map;
  * @Version: 1.0
  * @Desc:
  */
-public interface HelloService {
+public interface IHelloService {
     String hello(String name);
 
     boolean check(String value, String oldValue);
 
     Map<String,String> getIpInfo(String ip);
-
-    void printUser(UserInfo userInfo);
 }

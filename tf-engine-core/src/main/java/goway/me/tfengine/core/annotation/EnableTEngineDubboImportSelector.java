@@ -4,6 +4,8 @@ import goway.me.tfengine.core.utils.JarFileUtils;
 import goway.me.tfengine.core.utils.ScannerUtils;
 import goway.me.tfengine.core.utils.ZipUtils;
 import goway.me.tfengine.core.utils.ZookeeperUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.ApplicationContext;
@@ -12,6 +14,7 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.AnnotationAttributes;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.AnnotationMetadata;
@@ -19,20 +22,19 @@ import org.springframework.core.type.AnnotationMetadata;
 import java.util.Map;
 import java.util.Set;
 
-@Lazy()
+@Lazy(value = true)
 public class EnableTEngineDubboImportSelector implements ImportBeanDefinitionRegistrar, ResourceLoaderAware, EnvironmentAware {
 
-    private ApplicationContext applicationContext;
 
-    @Value("#{ @environment['zookeeper.address']?:'localhost:2181'}")
-    private String zkAddress;
+    private String defaultZkAddress="localhost:2181";
+    private Environment env;
 
     public EnableTEngineDubboImportSelector() {
     }
 
     @Override
     public void setEnvironment(Environment environment) {
-
+        this.env=environment;
     }
 
     @Override
@@ -71,6 +73,10 @@ public class EnableTEngineDubboImportSelector implements ImportBeanDefinitionReg
                     System.out.println(jarBase64);
                     //注册到zk
                     String registerPath="/tfengine/dubbo_api/"+serviceRegisterName;
+                    String zkAddress=env.getProperty("zookeeper.address");
+                    if(StringUtils.isBlank(zkAddress)){
+                        zkAddress=defaultZkAddress;
+                    }
                     ZookeeperUtils.create(zkAddress,registerPath,jarBase64);
                 });
             }catch (Exception e){

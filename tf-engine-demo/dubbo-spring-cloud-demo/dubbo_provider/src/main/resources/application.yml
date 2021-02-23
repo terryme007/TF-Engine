@@ -23,3 +23,5 @@ spring:
         password: nacos
   main:
     allow-bean-definition-overriding: true
+zookeeper:
+  address: localhost:2181

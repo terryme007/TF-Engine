@@ -1,7 +1,6 @@
 package com.springcloud.dubbo_provider.service;
 
-import com.springcloud.dubbo_api.model.UserInfo;
-import com.springcloud.dubbo_api.service.HelloService;
+import com.springcloud.dubbo_api.service.IHelloService;
 import org.apache.dubbo.config.annotation.Service;
 
 import java.util.HashMap;
@@ -16,7 +15,7 @@ import java.util.Map;
  * Description:
  */
 @Service(version = "1.0")
-public class HelloServiceImpl implements HelloService {
+public class HelloServiceImpl implements IHelloService {
     @Override
     public String hello(String name) {
         return "Hello " + name;
@@ -35,10 +34,5 @@ public class HelloServiceImpl implements HelloService {
         res.put("address","江南大道3888号");
         res.put("country","CN");
         return res;
-    }
-
-    @Override
-    public void printUser(UserInfo userInfo) {
-        System.out.println(userInfo.getName());
     }
 }

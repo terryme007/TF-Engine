@@ -33,6 +33,18 @@
             <groupId>goway.me</groupId>
             <artifactId>tf-engine-core</artifactId>
             <version>${tf-engine-core.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.curator</groupId>
+                    <artifactId>curator-recipes</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.curator</groupId>
+            <artifactId>curator-recipes</artifactId>
+            <version>4.2.0</version>
         </dependency>
     </dependencies>
 
