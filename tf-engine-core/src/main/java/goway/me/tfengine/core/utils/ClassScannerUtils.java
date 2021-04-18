@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -15,7 +14,7 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-public class ScannerUtils {
+public class ClassScannerUtils {
 
     /**
      * 从包package中获取所有的Class
@@ -106,7 +105,7 @@ public class ScannerUtils {
         return classes;
     }
 
-    public   void addClass(Set<Class<?>> classes, String filePath, String packageName) throws Exception{
+    public void addClass(Set<Class<?>> classes, String filePath, String packageName) throws Exception{
         File[] files=new File(filePath).listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
@@ -226,6 +225,6 @@ public class ScannerUtils {
     }
 
     public static void main(String[] args)throws Exception {
-        new ScannerUtils().getDubboInterface("");
+        new ClassScannerUtils().getDubboInterface("");
     }
 }

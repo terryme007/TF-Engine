@@ -8,9 +8,9 @@ import java.lang.annotation.*;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(EnableTEngineDubboImportSelector.class)
+@Import(TEngineServerImportSelector.class)
 @Component
-public @interface EnableTEngine {
+public @interface TEngineServer {
 
     boolean enableDubboAPI() default false;
     boolean enableRestAPI() default false;

@@ -1,11 +1,12 @@
 package goway.me.tfengine.core.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import java.io.*;
 
-
+@Slf4j
 public class Base64FileUtil {
 
     /**
@@ -22,12 +23,15 @@ public class Base64FileUtil {
             in.read(data);
             in.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Base64FileUtil.getFileStr 文件转base64异常",e);
+            return null;
         } finally {
             try {
-                in.close();
+                if(null!=in){
+                    in.close();
+                }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Base64FileUtil.getFileStr 文件流关闭异常",e);
             }
         }
         // 对字节数组Base64编码
@@ -46,8 +50,6 @@ public class Base64FileUtil {
             return false;
         }
         BASE64Decoder decoder = new BASE64Decoder();
-
-
         // Base64解码,对字节数组字符串进行Base64解码并生成文件
         byte[] byt = decoder.decodeBuffer(base64FileStr);
         for (int i = 0, len = byt.length; i < len; ++i) {

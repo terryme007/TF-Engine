@@ -8,7 +8,8 @@ import org.apache.dubbo.config.annotation.Service;
 public class UserServiceImpl implements IUserService {
 
     @Override
-    public void printUser(UserInfo userInfo) {
+    public UserInfo printUser(UserInfo userInfo) {
         System.out.println(userInfo.getName());
+        return new UserInfo();
     }
 }

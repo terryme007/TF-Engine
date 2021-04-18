@@ -1,18 +1,17 @@
-package com.springcloud.dubbo_consumer.utils;
+package goway.me.tfengine.core.utils;
 
-import  java.io.File;
-import  java.lang.reflect.Method;
-import  java.net.URL;
-import  java.net.URLClassLoader;
-import java.util.ArrayList;
-import  java.util.List;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.List;
 
 /**
  * 根据properties中配置的路径把jar和配置文件加载到classpath中。
  * @author jnbzwm
  *
  */
-public final class ExtClasspathLoader  {
+public final class ExtClasspathLoader {
     /** URLClassLoader的addURL方法 */
     private static Method addURL = initAddMethod();
 

@@ -1,5 +1,6 @@
 package goway.me.tfengine.core.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.tools.zip.ZipFile;
 
 import java.io.*;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+@Slf4j
 public class ZipUtils {
     private static final int BUFFER_SIZE = 2 * 1024;
 
@@ -30,7 +32,7 @@ public class ZipUtils {
             File sourceFile = new File(srcDir);
             compress(sourceFile, zos, sourceFile.getName(), KeepDirStructure);
             long end = System.currentTimeMillis();
-            System.out.println("压缩完成，耗时：" + (end - start) + " ms");
+            log.info("ZipUtils.toZip 压缩完成，耗时：{} ms",(end - start));
         } catch (Exception e) {
             throw new RuntimeException("zip error from ZipUtils", e);
         } finally {
@@ -68,7 +70,7 @@ public class ZipUtils {
                 in.close();
             }
             long end = System.currentTimeMillis();
-            System.out.println("压缩完成，耗时：" + (end - start) + " ms");
+            log.info("ZipUtils.toZip 压缩完成，耗时：{} ms",(end - start));
         } catch (Exception e) {
             throw new RuntimeException("zip error from ZipUtils", e);
         } finally {

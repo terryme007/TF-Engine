@@ -1,4 +1,4 @@
-package com.springcloud.dubbo_consumer.utils;
+package goway.me.tfengine.core.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,8 +15,7 @@ import org.springframework.stereotype.Service;
  * Spring 工具类
  */
 @Slf4j
-@Service
-@Lazy(false)
+@Component
 public class SpringContextHolder implements ApplicationContextAware, DisposableBean {
 
 	private static ApplicationContext applicationContext = null;

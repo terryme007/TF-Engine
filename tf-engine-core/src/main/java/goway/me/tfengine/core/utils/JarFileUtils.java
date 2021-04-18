@@ -1,13 +1,16 @@
 package goway.me.tfengine.core.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class JarFileUtils {
 
@@ -21,6 +24,8 @@ public class JarFileUtils {
     public static String getJarBase64(String apiReference,String modelName,String version) {
         String dirRoot="copyClass"+ UUID.randomUUID().toString().replaceAll("-","");
         try {
+            String[] pkgSplit = apiReference.split("\\.");
+            String org=pkgSplit[0]+"."+pkgSplit[1];
             Class<?> aClass = Class.forName(apiReference);
             //获取要导出的文件列表
             List<Class> outClassList=new ArrayList<>();
@@ -32,13 +37,13 @@ public class JarFileUtils {
                 for (Class paramType:parameterTypes){
                     String typeName=paramType.getName();
                     System.out.println(typeName);
-                    if(typeName.contains(modelName)){
+                    if(typeName.contains(org)){
                         outClassList.add(paramType);
                     }
                 }
                 String typeName=returnType.getName();
                 System.out.println(typeName);
-                if(typeName.contains(modelName)){
+                if(typeName.contains(org)){
                     outClassList.add(returnType);
                 }
             }
@@ -106,6 +111,96 @@ public class JarFileUtils {
             }
         }
         return file.delete();
+    }
+
+    //从jar包中加载指定package下的类
+    public static Set<Class<?>> getPackageService(URL url, String pack){
+        Set<Class<?>> classes = new LinkedHashSet<Class<?>>();// 第一个class类的集合
+        boolean recursive = true;// 是否循环迭代
+        String packageName = pack;// 获取包的名字 并进行替换
+        String packageDirName = packageName.replace('.', '/');
+
+        JarFile jar;
+        try {
+            // 获取jar
+            jar = new JarFile(url.getFile());
+            // 从此jar包 得到一个枚举类
+            Enumeration<JarEntry> entries = jar.entries();
+            // 同样的进行循环迭代
+            while (entries.hasMoreElements()) {
+                // 获取jar里的一个实体 可以是目录 和一些jar包里的其他文件 如META-INF等文件
+                JarEntry entry = entries.nextElement();
+                String name = entry.getName();
+                // 如果是以/开头的
+                if (name.charAt(0) == '/') {
+                    // 获取后面的字符串
+                    name = name.substring(1);
+                }
+                // 如果前半部分和定义的包名相同
+                if (name.startsWith(packageDirName)) {
+                    int idx = name.lastIndexOf('/');
+                    // 如果以"/"结尾 是一个包
+                    if (idx != -1) {
+                        // 获取包名 把"/"替换成"."
+                        packageName = name.substring(0, idx).replace('/', '.');
+                    }
+                    // 如果可以迭代下去 并且是一个包
+                    if ((idx != -1) || recursive) {
+                        // 如果是一个.class文件 而且不是目录
+                        if (name.endsWith(".class") && !entry.isDirectory()) {
+                            // 去掉后面的".class" 获取真正的类名
+                            String className = name.substring(packageName.length() + 1, name.length() - 6);
+                            try {
+                                // 添加到classes
+                                Class<?> extClass = Class.forName(packageName + '.' + className);
+                                classes.add(extClass);
+                            } catch (Exception e) {
+                                // log.error("添加用户自定义视图类错误 找不到此类的.class文件");
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // log.error("在扫描用户定义视图时从jar包获取文件出错");
+            e.printStackTrace();
+        }
+        return classes;
+    }
+
+    /**
+     * 获取目录下的文件
+     * @param obj
+     * @return
+     */
+    public static ArrayList<File> getListFiles(Object obj,String fileType) {
+        File directory = null;
+        if (obj instanceof File) {
+            directory = (File) obj;
+        } else {
+            directory = new File(obj.toString());
+        }
+        ArrayList<File> files = new ArrayList<File>();
+        if (directory.isFile()) {
+            if(StringUtils.isNotBlank(fileType)){
+                int lastDot = directory.getName().lastIndexOf(".");
+                if(lastDot>0 && fileType.equals(directory.getName().substring(lastDot+1))){
+                    files.add(directory);
+                }
+            }
+
+            return files;
+        } else if (directory.isDirectory()) {
+            if(!directory.getName().equals(".git") && !directory.getName().equals("targer") && !directory.getName().equals("logs")){
+                File[] fileArr = directory.listFiles();
+                for (int i = 0; i < fileArr.length; i++) {
+                    File fileOne = fileArr[i];
+                    files.addAll(getListFiles(fileOne,fileType));
+                }
+            }
+        }
+        return files;
     }
 
 
